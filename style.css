@@ -1,0 +1,208 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  background: #87CEEB;
+}
+
+#game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, rgba(255,182,193,0.92), rgba(173,216,230,0.92), rgba(221,160,221,0.92));
+  z-index: 100;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.overlay h1 {
+  font-size: clamp(2.4rem, 8vw, 4.2rem);
+  color: #fff;
+  text-shadow: 0 4px 0 #ff6b9d, 0 8px 24px rgba(255,107,157,0.5);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.08em;
+}
+
+.overlay .subtitle {
+  color: #fff8fc;
+  font-size: 1.1rem;
+  margin-bottom: 1.8rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding: 0.85rem 2.4rem;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(180deg, #ff8ec8, #ff4d9a);
+  box-shadow: 0 6px 0 #c2185b, 0 10px 24px rgba(194,24,91,0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  margin: 0.4rem;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #c2185b, 0 4px 12px rgba(194,24,91,0.3);
+}
+
+.btn.secondary {
+  background: linear-gradient(180deg, #7ed6ff, #3aa0ff);
+  box-shadow: 0 6px 0 #1565c0, 0 10px 24px rgba(21,101,192,0.35);
+}
+
+.btn.secondary:active {
+  box-shadow: 0 2px 0 #1565c0, 0 4px 12px rgba(21,101,192,0.3);
+}
+
+.howto {
+  margin-top: 1.6rem;
+  max-width: 420px;
+  padding: 1rem 1.4rem;
+  background: rgba(255,255,255,0.35);
+  border-radius: 16px;
+  color: #5a2a4a;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.howto strong {
+  color: #c2185b;
+}
+
+#hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+  z-index: 50;
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  font-weight: 700;
+}
+
+#hud.hidden {
+  display: none;
+}
+
+#timer {
+  font-size: 1.4rem;
+  background: rgba(0,0,0,0.25);
+  padding: 6px 14px;
+  border-radius: 12px;
+}
+
+#checkpoint-label {
+  font-size: 0.95rem;
+  background: rgba(255,107,157,0.75);
+  padding: 6px 12px;
+  border-radius: 12px;
+}
+
+#mobile-controls {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  display: none;
+}
+
+#mobile-controls.visible {
+  display: block;
+}
+
+.joy-base {
+  position: absolute;
+  left: 24px;
+  bottom: 28px;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.22);
+  border: 3px solid rgba(255,255,255,0.45);
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.joy-knob {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.75);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.jump-btn {
+  position: absolute;
+  right: 28px;
+  bottom: 40px;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.55);
+  background: rgba(255,77,154,0.75);
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 800;
+  pointer-events: auto;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(194,24,91,0.4);
+}
+
+.jump-btn:active {
+  transform: scale(0.94);
+  background: rgba(255,77,154,0.95);
+}
+
+@media (max-width: 900px), (pointer: coarse) {
+  #mobile-controls.visible {
+    display: block;
+  }
+}

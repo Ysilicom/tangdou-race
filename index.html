@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>糖豆闯关</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="game-canvas"></canvas>
+
+  <div id="hud" class="hidden">
+    <div id="timer">00:00</div>
+    <div id="checkpoint-label">起点</div>
+  </div>
+
+  <div id="title-overlay" class="overlay">
+    <h1>糖豆闯关</h1>
+    <p class="subtitle">冲过障碍，抢先登顶！</p>
+    <button class="btn" id="btn-start">开始游戏</button>
+    <button class="btn secondary" id="btn-howto">操作说明</button>
+    <div id="howto-panel" class="howto" style="display:none">
+      <strong>键盘：</strong>WASD / 方向键移动，空格跳跃<br />
+      <strong>手机：</strong>左侧虚拟摇杆移动，右侧按钮跳跃<br />
+      掉落会回到最近检查点。冲到终点就过关啦！
+    </div>
+  </div>
+
+  <div id="win-overlay" class="overlay hidden">
+    <h1>过关！</h1>
+    <p class="subtitle" id="win-time">用时 —</p>
+    <button class="btn" id="btn-replay">再玩一次</button>
+  </div>
+
+  <div id="mobile-controls">
+    <div class="joy-base" id="joy-base">
+      <div class="joy-knob" id="joy-knob"></div>
+    </div>
+    <button class="jump-btn" id="jump-btn" type="button">跳</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
