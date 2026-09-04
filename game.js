@@ -756,9 +756,8 @@
     let ix = 0, iz = 0;
     if (keys["KeyW"] || keys["ArrowUp"]) iz += 1;
     if (keys["KeyS"] || keys["ArrowDown"]) iz -= 1;
-    // chase cam looks along +Z, so screen-right is world -X
-    if (keys["KeyA"] || keys["ArrowLeft"]) ix += 1;
-    if (keys["KeyD"] || keys["ArrowRight"]) ix -= 1;
+    if (keys["KeyA"] || keys["ArrowLeft"]) ix -= 1;
+    if (keys["KeyD"] || keys["ArrowRight"]) ix += 1;
     ix += joy.x;
     iz += joy.z;
     const len = Math.hypot(ix, iz);
@@ -899,7 +898,7 @@
     const mag = Math.hypot(dx, dy);
     if (mag > max) { dx = (dx / mag) * max; dy = (dy / mag) * max; }
     joyKnob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-    joy.x = -dx / max; // screen-right → world -X (chase cam along +Z)
+    joy.x = dx / max;
     joy.z = -dy / max;
   }
   function joyEnd() {
