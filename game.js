@@ -752,22 +752,40 @@
     return !!mesh.userData.onGround;
   }
 
+  function screenToWorldMove(screenX, screenZ) {
+    // screenX: -1 left / +1 right on the monitor; screenZ: +1 forward (into scene)
+    const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
+    right.y = 0;
+    if (right.lengthSq() < 1e-6) right.set(1, 0, 0);
+    else right.normalize();
+    const forward = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 2);
+    forward.y = 0;
+    forward.negate(); // Three.js camera looks down its -Z
+    if (forward.lengthSq() < 1e-6) forward.set(0, 0, 1);
+    else forward.normalize();
+    return {
+      x: right.x * screenX + forward.x * screenZ,
+      z: right.z * screenX + forward.z * screenZ,
+    };
+  }
+
   function updatePlayer(dt) {
-    let ix = 0, iz = 0;
-    if (keys["KeyW"] || keys["ArrowUp"]) iz += 1;
-    if (keys["KeyS"] || keys["ArrowDown"]) iz -= 1;
-    // Screen-left = world +X with chase cam looking along +Z
-    if (keys["KeyA"] || keys["ArrowLeft"]) ix += 1;
-    if (keys["KeyD"] || keys["ArrowRight"]) ix -= 1;
-    ix += joy.x;
-    iz += joy.z;
-    const len = Math.hypot(ix, iz);
-    if (len > 1) { ix /= len; iz /= len; }
+    // Screen-space intent: A/left = -1, D/right = +1, W = forward
+    let sx = 0, sz = 0;
+    if (keys["KeyW"] || keys["ArrowUp"]) sz += 1;
+    if (keys["KeyS"] || keys["ArrowDown"]) sz -= 1;
+    if (keys["KeyA"] || keys["ArrowLeft"]) sx -= 1;
+    if (keys["KeyD"] || keys["ArrowRight"]) sx += 1;
+    sx += joy.x;
+    sz += joy.z;
+    const len = Math.hypot(sx, sz);
+    if (len > 1) { sx /= len; sz /= len; }
+    const move = screenToWorldMove(sx, sz);
 
     const wantJump = jumpQueued || keys["Space"] || jumpPressed;
     jumpQueued = false;
 
-    integrateBean(player, playerVel, ix, iz, wantJump, dt, true);
+    integrateBean(player, playerVel, move.x, move.z, wantJump, dt, true);
 
     // checkpoints
     for (let i = currentCheckpoint + 1; i < checkpoints.length; i++) {
@@ -899,8 +917,8 @@
     const mag = Math.hypot(dx, dy);
     if (mag > max) { dx = (dx / mag) * max; dy = (dy / mag) * max; }
     joyKnob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-    joy.x = -dx / max; // finger left → screen left → world +X
-    joy.z = -dy / max;
+    joy.x = dx / max;  // finger right = screen right (+1)
+    joy.z = -dy / max; // finger up = forward (+1)
   }
   function joyEnd() {
     joyActive = false;
