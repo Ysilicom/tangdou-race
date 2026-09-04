@@ -133,41 +133,111 @@
     solid.top = p.y + hy;
   }
 
-  function makeBean(color, scale = 1) {
+  function makeBean(color, scale = 1, cute = false) {
     const g = new THREE.Group();
+    const bodyColor = cute ? 0xffb7d5 : color;
     const body = new THREE.Mesh(
-      new THREE.SphereGeometry(0.55 * scale, 24, 18),
-      makeMat(color, { roughness: 0.35 })
+      new THREE.SphereGeometry(0.55 * scale, 28, 22),
+      makeMat(bodyColor, { roughness: 0.28 })
     );
-    body.scale.set(1, 1.15, 0.95);
+    body.scale.set(cute ? 1.05 : 1, cute ? 1.22 : 1.15, cute ? 0.92 : 0.95);
     body.castShadow = true;
     g.add(body);
 
-    const eyeGeo = new THREE.SphereGeometry(0.1 * scale, 12, 10);
+    if (cute) {
+      const belly = new THREE.Mesh(
+        new THREE.SphereGeometry(0.32 * scale, 16, 12),
+        makeMat(0xffe6f2, { roughness: 0.55 })
+      );
+      belly.position.set(0, -0.08 * scale, 0.28 * scale);
+      belly.scale.set(1.1, 0.9, 0.55);
+      g.add(belly);
+    }
+
+    const eyeGeo = new THREE.SphereGeometry((cute ? 0.14 : 0.1) * scale, 14, 12);
     const eyeMat = makeMat(0xffffff);
-    const pupilMat = makeMat(0x222233);
-    [-0.18, 0.18].forEach((ox) => {
+    const pupilMat = makeMat(cute ? 0x5b3a6b : 0x222233);
+    const eyeY = (cute ? 0.22 : 0.18) * scale;
+    const eyeZ = (cute ? 0.4 : 0.42) * scale;
+    [-0.2, 0.2].forEach((ox) => {
       const eye = new THREE.Mesh(eyeGeo, eyeMat);
-      eye.position.set(ox * scale, 0.18 * scale, 0.42 * scale);
+      eye.position.set(ox * scale, eyeY, eyeZ);
+      eye.scale.set(cute ? 1.05 : 1, cute ? 1.15 : 1, 1);
       g.add(eye);
-      const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.05 * scale, 8, 8), pupilMat);
-      pupil.position.set(ox * scale, 0.18 * scale, 0.5 * scale);
+      const pupil = new THREE.Mesh(
+        new THREE.SphereGeometry((cute ? 0.065 : 0.05) * scale, 10, 10),
+        pupilMat
+      );
+      pupil.position.set(ox * scale, eyeY + (cute ? 0.01 : 0) * scale, eyeZ + 0.08 * scale);
       g.add(pupil);
+      if (cute) {
+        const shine = new THREE.Mesh(
+          new THREE.SphereGeometry(0.028 * scale, 8, 8),
+          makeMat(0xffffff, { roughness: 0.1, emissive: 0xffffff, emissiveIntensity: 0.35 })
+        );
+        shine.position.set(ox * scale - 0.03 * scale, eyeY + 0.04 * scale, eyeZ + 0.12 * scale);
+        g.add(shine);
+        const lash = new THREE.Mesh(
+          new THREE.BoxGeometry(0.09 * scale, 0.018 * scale, 0.02 * scale),
+          makeMat(0x5b3a6b)
+        );
+        lash.position.set(ox * scale, eyeY + 0.12 * scale, eyeZ + 0.02 * scale);
+        lash.rotation.z = ox > 0 ? -0.25 : 0.25;
+        g.add(lash);
+      }
     });
 
+    if (cute) {
+      [-0.32, 0.32].forEach((ox) => {
+        const blush = new THREE.Mesh(
+          new THREE.SphereGeometry(0.08 * scale, 10, 8),
+          makeMat(0xff8fb8, { roughness: 0.7, emissive: 0xff6b9d, emissiveIntensity: 0.15 })
+        );
+        blush.position.set(ox * scale, 0.02 * scale, 0.4 * scale);
+        blush.scale.set(1.2, 0.7, 0.4);
+        g.add(blush);
+      });
+    }
+
     const smile = new THREE.Mesh(
-      new THREE.TorusGeometry(0.14 * scale, 0.03 * scale, 8, 16, Math.PI),
+      new THREE.TorusGeometry((cute ? 0.11 : 0.14) * scale, (cute ? 0.025 : 0.03) * scale, 8, 16, Math.PI),
       makeMat(0xff6b8a)
     );
-    smile.position.set(0, -0.05 * scale, 0.48 * scale);
+    smile.position.set(0, (cute ? -0.08 : -0.05) * scale, (cute ? 0.46 : 0.48) * scale);
     smile.rotation.x = Math.PI;
     g.add(smile);
+
+    if (cute) {
+      const tuft = new THREE.Mesh(
+        new THREE.SphereGeometry(0.2 * scale, 12, 10),
+        makeMat(0xff9ec8, { roughness: 0.4 })
+      );
+      tuft.position.set(0, 0.62 * scale, -0.05 * scale);
+      tuft.scale.set(1.1, 0.85, 0.9);
+      g.add(tuft);
+      const bowL = new THREE.Mesh(
+        new THREE.SphereGeometry(0.12 * scale, 10, 8),
+        makeMat(0xff5fa2, { roughness: 0.35 })
+      );
+      bowL.position.set(-0.14 * scale, 0.72 * scale, 0.05 * scale);
+      bowL.scale.set(1.3, 0.7, 0.5);
+      g.add(bowL);
+      const bowR = bowL.clone();
+      bowR.position.x = 0.14 * scale;
+      g.add(bowR);
+      const knot = new THREE.Mesh(
+        new THREE.SphereGeometry(0.06 * scale, 8, 8),
+        makeMat(0xff3d8a)
+      );
+      knot.position.set(0, 0.72 * scale, 0.08 * scale);
+      g.add(knot);
+    }
 
     const legGeo = (THREE.CapsuleGeometry
       ? new THREE.CapsuleGeometry(0.12 * scale, 0.18 * scale, 4, 8)
       : new THREE.CylinderGeometry(0.12 * scale, 0.12 * scale, 0.35 * scale, 8));
     [-0.22, 0.22].forEach((ox) => {
-      const leg = new THREE.Mesh(legGeo, makeMat(color));
+      const leg = new THREE.Mesh(legGeo, makeMat(bodyColor));
       leg.position.set(ox * scale, -0.55 * scale, 0);
       leg.castShadow = true;
       g.add(leg);
@@ -392,7 +462,7 @@
 
   function spawnPlayer() {
     if (player) scene.remove(player);
-    player = makeBean(0xff6ec7, 1);
+    player = makeBean(0xffb7d5, 1, true);
     player.position.set(0, 1.5, 2);
     scene.add(player);
     playerVel = new THREE.Vector3(0, 0, 0);
@@ -686,8 +756,9 @@
     let ix = 0, iz = 0;
     if (keys["KeyW"] || keys["ArrowUp"]) iz += 1;
     if (keys["KeyS"] || keys["ArrowDown"]) iz -= 1;
-    if (keys["KeyA"] || keys["ArrowLeft"]) ix -= 1;
-    if (keys["KeyD"] || keys["ArrowRight"]) ix += 1;
+    // chase cam looks along +Z, so screen-right is world -X
+    if (keys["KeyA"] || keys["ArrowLeft"]) ix += 1;
+    if (keys["KeyD"] || keys["ArrowRight"]) ix -= 1;
     ix += joy.x;
     iz += joy.z;
     const len = Math.hypot(ix, iz);
@@ -828,7 +899,7 @@
     const mag = Math.hypot(dx, dy);
     if (mag > max) { dx = (dx / mag) * max; dy = (dy / mag) * max; }
     joyKnob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-    joy.x = dx / max;
+    joy.x = -dx / max; // screen-right → world -X (chase cam along +Z)
     joy.z = -dy / max;
   }
   function joyEnd() {
